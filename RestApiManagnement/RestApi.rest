@@ -1,0 +1,43 @@
+User @Auth=http://localhost:5500/auth @Admin=http://localhost:5500/admin @Manager=http://localhost:5500/manager @participant=http://localhost:5500/participant
+
+#####ADMIN API##########.####
+
+####POST STAll details
+
+POST http://localhost:5500/admin/stallInformation HTTP/1.1 content-type: application/json
+
+###USER/AUTH API ####### #######POST
+
+##registration:- POST http://localhost:5500/auth/register HTTP/1.1 content-type: application/json
+
+##login:-
+
+POST http://localhost:5500/auth/login HTTP/1.1 content-type: application/json
+
+####Manager API ####### GET
+
+http://localhost:5500/manager/cards
+GET http://localhost:5500/manager/card/:cardId
+
+GET
+
+http://localhost:5500/manager/cards/category/:Category
+
+PATCH
+
+http://localhost:5500/manager/card/:cardId
+
+DELETE
+
+http://localhost:5500/manager/card/:cardId
+
+######Participant API ###########
+
+GET
+http://localhost:5500/participant/cards
+GET
+http://localhost:5500/participant/cards/category/:Category
+GET
+
+http://localhost:5500/participant/card/:cardId
+virtual-backend/RestApiManagnement/RestApi.rest at main · digvijaybind/virtual-backend
