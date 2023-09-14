@@ -1,6 +1,11 @@
 const Mongoose = require("mongoose");
 
 const OperatorSchema = new Mongoose.Schema({
+  Id: {
+    type: Number,
+    required: true,
+    unique: true,
+  },
   company_name: {
     type: String,
     required: true,
@@ -31,13 +36,14 @@ const OperatorSchema = new Mongoose.Schema({
   location: {
     type: String,
     required: true,
-    unique:true,
+    unique: true,
   },
-  charges_per_hour:{
-    type:Number,
-    required:true,
-    unique:true,
-  }
+  charges_per_hour: {
+    type: Number,
+    required: true,
+    unique: true,
+  },
+  date: {type: Date, default: Date.now},
 });
 
 module.exports = Mongoose.model("Operator", OperatorSchema);
