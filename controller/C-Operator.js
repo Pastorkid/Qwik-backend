@@ -102,9 +102,42 @@ exports.AddAircrafts = async (req, res, next) => {
         });
       }
     
-  );
+  )
 };
 
 exports.EditOperator=async(req,res,next)=>{
-    await Operator.findOne({where:{Email:req.body.email}})
+    try{
+      const Id=req.params.Id;
+      const updateData=req.body;
+
+      const updateItem=await Operator.findByIdAndUpdate(Id,updateData,{
+        new:true
+      });
+      if(!updateItem){
+        return res.status(404).json({message:'Item not found'});
+
+      }
+      return res.json(updateItem);
+
+
+    }catch(error){
+              
+      console.error("error updating items:",error);
+      return res.status(500).json({message:'Internal server error'})
+    }
+}
+exports.DeleteOperator=async(req,res,next)=>{
+  try{
+   const Id=req.params.Id;
+
+  const deleteItems=await Operator.findByIdAndDelete(Id);
+  if(!deleteItems){
+    return res.status(404).json({message:'Items not found'})
+  }
+  return res.json({message:"Aircrafts information delete successful"})
+  }
+  catch(error){
+    console.log("Error deleteing aircrafts info",error);
+    return res.status(500).json({message:"Internal server error"})
+  }
 }

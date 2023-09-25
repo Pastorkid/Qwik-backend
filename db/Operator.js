@@ -25,7 +25,7 @@ const OperatorSchema = new Mongoose.Schema({
     required: true,
     enum: ["Challenger 605", "Learjet", "B200", "C90"],
   },
-  Operator_person: {
+  Tail_sign: {
     type: String,
     required: true,
   },
@@ -39,6 +39,11 @@ const OperatorSchema = new Mongoose.Schema({
     unique: true,
   },
   charges_per_hour: {
+    type: Number,
+    required: true,
+    unique: true,
+  },
+  speed: {
     type: Number,
     required: true,
     unique: true,
