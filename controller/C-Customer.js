@@ -53,6 +53,7 @@ exports.AdminPrice=async(req,res)=>{
 try {
 
   const calculatePriceResponse = await PriceCalcultor();
+  console.log(calculatePriceResponse);
 
   if(!calculatePriceResponse.ok){
     return res.status(500).json({error:"error calculating"})
@@ -61,6 +62,8 @@ try {
   const{totalPrice}=await calculatePriceResponse.json();
 
   const discountAmount=totalPrice*0.05;
+console.log(discountAmount);
+
   req.json({discountAmount})
 }catch(error){
    res.status(500).json({error:'Internal server error'})

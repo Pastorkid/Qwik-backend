@@ -23,6 +23,8 @@ const OperatorRouter = require("./router/Operator-Router");
 
 app.use(bodyparser.json({limit: "5mb"}));
 app.use(cors());
+
+
 app.use(morgan("dev"));
 app.use(bodyparser.urlencoded({extended: true}));
 

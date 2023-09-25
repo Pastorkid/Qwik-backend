@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const cookieSession = require("cokkie-session");
+const cookieSession = require("cookie-session");
 const app = express();
 
 var corOptions = {
