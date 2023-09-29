@@ -1,4 +1,3 @@
-
 const Mongoose = require("mongoose");
 const CustomerSchema = new Mongoose.Schema({
   email: {
@@ -15,6 +14,16 @@ const CustomerSchema = new Mongoose.Schema({
     type: Number,
     unique: true,
     required: true,
+  },
+  FromLocation: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  ToLocation: {
+    type: String,
+    required: true,
+    unique: true,
   },
 });
 

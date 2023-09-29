@@ -29,4 +29,17 @@ app.listen(3000, () => {
   console.log("node API app is running on port 3000");
 });
 
-mongoose.connect();
+mongoose
+  .connect(
+    "mongodb+srv://ownProject:ownProject@cluster0.ygo289s.mongodb.net/",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
+  .then(() => {
+    console.log("Connect Suucessfully");
+  })
+  .catch((err) => {
+    console.log("err", err);
+  });
