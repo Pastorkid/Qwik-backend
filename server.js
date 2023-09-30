@@ -31,7 +31,7 @@ app.listen(3000, () => {
 
 mongoose
   .connect(
-    "mongodb+srv://ownProject:ownProject@cluster0.ygo289s.mongodb.net/",
+    "mongodb+srv://digvijay:digvijay1234@cluster0.ygo289s.mongodb.net/",
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
