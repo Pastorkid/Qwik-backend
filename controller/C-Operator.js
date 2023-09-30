@@ -7,6 +7,9 @@ exports.Signup = async (res, res, next) => {
       if (operatoremail) {
         res.status(409).json({Error: "Email  exist Use new Email"});
       } else {
+
+
+        
         bcrypt.genSalt(
           math.floor(math.random() * (15 - 10)) + 10,
           function (err, salt) {
