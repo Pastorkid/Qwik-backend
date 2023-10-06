@@ -11,20 +11,9 @@ const CustomerSchema = new Mongoose.Schema({
     minLength: [8, "Minimum password length is 8"],
   },
   contact_number: {
-    type: Number,
-    unique: true,
-    required: true,
-  },
-  FromLocation: {
     type: String,
-    required: true,
-    unique: true,
-  },
-  ToLocation: {
-    type: String,
-    required: true,
     unique: true,
   },
 });
 
-module.exports = mongoose.model("Customer", CustomerSchema);
+module.exports = Mongoose.model("Customer", CustomerSchema);

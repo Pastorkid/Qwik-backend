@@ -16,4 +16,4 @@ const UserSchema = new Mongoose.Schema({
     required: true,
   },
 });
-module.exports = mongoose.module("Auth", UserSchema);
+module.exports = Mongoose.model("Auth", UserSchema);

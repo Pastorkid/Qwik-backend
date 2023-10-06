@@ -1,15 +1,12 @@
 const Auth = require("../db/Auth");
 const bcrypt = require("bcrypt");
 const Operator = require("../db/Operator");
-exports.Signup = async (res, res, next) => {
+exports.Signup = async (req, res, next) => {
   await Operator.findOne({where: {Email: req.body.email}}).then(
     (operatoremail) => {
       if (operatoremail) {
         res.status(409).json({Error: "Email  exist Use new Email"});
       } else {
-
-
-        
         bcrypt.genSalt(
           math.floor(math.random() * (15 - 10)) + 10,
           function (err, salt) {
@@ -85,62 +82,94 @@ exports.login = (req, res, next) => {
     });
 };
 
-exports.AddAircrafts = async (req, res, next) => {
-  await Operator.findOne({where: {Email: req.body.email}}).then(
-    (OperatorEmail) => {
-      if (!OperatorEmail) {
-        res.status(409).json({Error: "Operator dones not  exist!"});
-      } else {
-        const NewOperator = Operator.build({
-          Operator_person: body.Operator_person,
-          Aircraft_type: body.Aircraft_type,
-          location: body.location,
-          charges_per_hour: body.charges_per_hour,
-          date: body.date,
-        });
-        NewOperator.save().then((result) => {
-          res.status(200).json({data: results}).then(
-            
-          )
-        });
-      }
-    
-  )
+exports.Register = async (req, res, next) => {
+  const {company_name, email_address, password} = req.body;
+  console.log(req.body);
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new Operator({
+      company_name,
+      email_address,
+      password: hashedPassword,
+    });
+    await newUser.save();
+    res.json({message: "Operator register suceesful"});
+  } catch (error) {
+    console.log(error);
+  }
 };
+exports.Login = async (req, res) => {
+  const {email_address, password} = req.body;
+  try {
+    const user = await Operator.findOne({email_address: email_address});
 
-exports.EditOperator=async(req,res,next)=>{
-    try{
-      const Id=req.params.Id;
-      const updateData=req.body;
-
-      const updateItem=await Operator.findByIdAndUpdate(Id,updateData,{
-        new:true
-      });
-      if(!updateItem){
-        return res.status(404).json({message:'Item not found'});
-
-      }
-      return res.json(updateItem);
-
-
-    }catch(error){
-              
-      console.error("error updating items:",error);
-      return res.status(500).json({message:'Internal server error'})
+    if (!user) {
+      return res.json({message: "Incorrect email"});
     }
-}
-exports.DeleteOperator=async(req,res,next)=>{
-  try{
-   const Id=req.params.Id;
+    const passwordMatch = await bcrypt.compare(password, user.password);
 
-  const deleteItems=await Operator.findByIdAndDelete(Id);
-  if(!deleteItems){
-    return res.status(404).json({message:'Items not found'})
+    if (!passwordMatch) {
+      return res.status(404).json({message: "inCorrect passord"});
+    }
+    return res.status(200).json({message: "login succes fully done "});
+  } catch (error) {
+    console.log(error);
   }
-  return res.json({message:"Aircrafts information delete successful"})
+};
+exports.AddAircrafts = async (req, res, next) => {};
+
+// exports.AddAircrafts = async (req, res, next) => {
+//   await Operator.findOne({where: {Email: req.body.email}}).then(
+//     (OperatorEmail) => {
+//       if (!OperatorEmail) {
+//         res.status(409).json({Error: "Operator dones not  exist!"});
+//       } else {
+//         const NewOperator = Operator.build({
+//           Operator_person: body.Operator_person,
+//           Aircraft_type: body.Aircraft_type,
+//           location: body.location,
+//           charges_per_hour: body.charges_per_hour,
+//           date: body.date,
+//         });
+//         NewOperator.save().then((result) => {
+//           res.status(200).json({data: results}).then(
+
+//           )
+//         });
+//       }
+
+//   );
+// };
+
+exports.EditOperator = async (req, res, next) => {
+  try {
+    const Id = req.params.Id;
+    const updateData = req.body;
+
+    const updateItem = await Operator.findByIdAndUpdate(Id, updateData, {
+      new: true,
+    });
+    if (!updateItem) {
+      return res.status(404).json({message: "Item not found"});
+    }
+    return res.json(updateItem);
+  } catch (error) {
+    console.error("error updating items:", error);
+    return res.status(500).json({message: "Internal server error"});
   }
-  catch(error){
-    console.log("Error deleteing aircrafts info",error);
-    return res.status(500).json({message:"Internal server error"})
+};
+exports.DeleteOperator = async (req, res, next) => {
+  try {
+    const Id = req.params.Id;
+
+    const deleteItems = await Operator.findByIdAndDelete(Id);
+    if (!deleteItems) {
+      return res.status(404).json({message: "Items not found"});
+    }
+    return res.json({message: "Aircrafts information delete successful"});
+  } catch (error) {
+    console.log("Error deleteing aircrafts info", error);
+    return res.status(500).json({message: "Internal server error"});
   }
-}
+};
