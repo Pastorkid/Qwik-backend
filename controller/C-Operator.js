@@ -1,6 +1,7 @@
 const Auth = require("../db/Auth");
 const bcrypt = require("bcrypt");
 const Operator = require("../db/Operator");
+
 exports.Signup = async (req, res, next) => {
   await Operator.findOne({where: {Email: req.body.email}}).then(
     (operatoremail) => {
