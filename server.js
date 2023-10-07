@@ -9,7 +9,9 @@ const CustomerRouter = require("./routes/Customer-Router");
 const AdminRouter = require("./routes/Admin-Router");
 const cookieParser = require("cookie-parser");
 const errorMiddleware = require("./middleware/error-middleware");
+const dotenv = require("dotenv");
 require("./database/Database");
+dotenv.config();
 // var corOptions = {
 //   origin: "http://localhost:8081",
 // };
