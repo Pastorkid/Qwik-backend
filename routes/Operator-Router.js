@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const OperatorController = require("../controller/C-Operator");
-const authMiddleware = require("../middleware/authMiddleware");
+const {authMiddleware} = require("../middleware/authMiddleware");
 const asyncMiddleware = require("../middleware/async-middleware");
 // router.patch(
 //   "/editaircraft",
