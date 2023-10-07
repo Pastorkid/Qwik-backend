@@ -1,7 +1,7 @@
 const {Operator,AircraftOPerator}= require("../db/Operator");
 class OperatorService {
-  getOperators = async (filter = null) => {
-    return await Operator.find(filter);
+  getOperators = async () => {
+    return await AircraftOPerator.find();
   };
   getOpeartorsSearchFilter = async (filter) => {
     const key = Object.key(filter);
@@ -13,7 +13,7 @@ class OperatorService {
   };
 
   getOperator = async (filter) => {
-    return await Operator.findOne(filter);
+    return await AircraftOPerator.findOne(filter);
   };
   updateOperator = async (filter, data) => {
     const operator = await Operator.findOneAndUpdate(filter, data);

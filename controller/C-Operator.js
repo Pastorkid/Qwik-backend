@@ -92,13 +92,14 @@ exports.AddAircrafts = async (req, res, next) => {
   });
 };
 
-exports.getOperatorlist = async (req, res) => {
+exports.getOperatorlists = async (req, res) => {
+
   const operator = await OperatorService.getOperators();
-  if (!operator || operator.length < 1)
-    return res.status(404).json({success: false, message: "No opeator found"});
-  operator = operator.map((o) => {
-    return new OperatorDto(o);
-  });
+  // if (!operator || operator.length < 1)
+  //   return res.status(404).json({success: false, message: "No opeator found"});
+  // operator = operator.map((o) => {
+  //   return new OperatorDto(o);
+  // });
   res.json({succes: true, message: "operator List found", data: operator});
 };
 exports.EditOperator = async (req, res) => {
