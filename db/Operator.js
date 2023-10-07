@@ -9,6 +9,14 @@ const OperatorSchema = new Mongoose.Schema({
     type: String,
     required: true,
   },
+  
+  password: {
+    type: String,
+    required: true,
+  },
+  
+});
+const AircraftOPeratorSchema=new Mongoose.Schema({
   contact_number: {
     type: Number,
   },
@@ -18,10 +26,6 @@ const OperatorSchema = new Mongoose.Schema({
   },
   Tail_sign: {
     type: String,
-  },
-  password: {
-    type: String,
-    required: true,
   },
   location: {
     type: String,
@@ -33,7 +37,7 @@ const OperatorSchema = new Mongoose.Schema({
     type: Number,
   },
   date: {type: Date, default: Date.now},
-});
+})
 // const OperatorSchema = new Mongoose.Schema({
 //   id: {
 //     Id: {
@@ -148,5 +152,7 @@ const OperatorSchema = new Mongoose.Schema({
 //     Date: {date: {type: Date, default: Date.now}},
 //   },
 // };
+const Operator=Mongoose.model("Operator", OperatorSchema);
+const AircraftOPerator=Mongoose.model("AircraftOPerator", AircraftOPeratorSchema)
+module.exports = {Operator, AircraftOPerator};
 
-module.exports = Mongoose.model("Operator", OperatorSchema);

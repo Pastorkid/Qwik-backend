@@ -1,5 +1,4 @@
-const Operator = require("../db/Operator");
-
+const {Operator,AircraftOPerator}= require("../db/Operator");
 class OperatorService {
   getOperators = async (filter = null) => {
     return await Operator.find(filter);
@@ -24,7 +23,7 @@ class OperatorService {
     return await Operator.deleteOne(filter);
   };
   createOperator = async (operator) => {
-    return await Operator.create(operator);
+    return await AircraftOPerator.create(operator);
   };
 }
 module.exports = new OperatorService();
