@@ -1,6 +1,7 @@
 const Auth = require("../db/Auth");
 const bcrypt = require("bcrypt");
 const Operator = require("../db/Operator");
+const generateToken = require("../configs/jwtToken");
 exports.Signup = async (req, res, next) => {
   await Operator.findOne({where: {Email: req.body.email}}).then(
     (operatoremail) => {
@@ -94,15 +95,19 @@ exports.Register = async (req, res, next) => {
       password: hashedPassword,
     });
     await newUser.save();
-    res.json({message: "Operator register suceesful"});
+    res.status(201).json({message: "Operator register suceesful"});
   } catch (error) {
     console.log(error);
   }
 };
 exports.Login = async (req, res) => {
   const {email_address, password} = req.body;
+  const findUser = await Operator.findOne({email_address: email_address});
   try {
-    const user = await Operator.findOne({email_address: email_address});
+    const user = await Operator.findOne({
+      email_address: email_address,
+      // token: generateToken(findUser?._id),
+    });
 
     if (!user) {
       return res.json({message: "Incorrect email"});
@@ -117,7 +122,18 @@ exports.Login = async (req, res) => {
     console.log(error);
   }
 };
-exports.AddAircrafts = async (req, res, next) => {};
+exports.AddAircrafts = async (req, res, next) => {
+  console.log(req.body);
+
+  const AirOperator = {
+    Aircraft_type: req.body.Aircraft_type,
+    Tail_sign: req.body.Tail_sign,
+    location: req.body.location,
+    charges_per_hour: req.body.charges_per_hour,
+    speed: req.body.speed,
+    date: req.body.date,
+  };
+};
 
 // exports.AddAircrafts = async (req, res, next) => {
 //   await Operator.findOne({where: {Email: req.body.email}}).then(
