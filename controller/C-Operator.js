@@ -1,21 +1,20 @@
 const Auth = require("../db/Auth");
 const bcrypt = require("bcrypt");
-const {Operator,AircraftOPerator}= require("../db/Operator");
+const {Operator, AircraftOPerator} = require("../db/Operator");
 const Token = require("../configs/jwtToken");
 const ErrorHandler = require("../utils/error-handler");
 const OperatorService = require("../services/operator-service");
 const OperatorDto = require("../dtos/operator-dto");
-const generateToken=require("../configs/jwtToken")
+const generateToken = require("../configs/jwtToken");
 
 exports.Register = async (req, res, next) => {
-  const { company_name, email_address, password } = req.body;
+  const {company_name, email_address, password} = req.body;
   console.log(req.body);
-
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const findOperator = await Operator.findOne({
-      email_address,
+      email_address: email_address,
     });
     if (!findOperator) {
       // create new operator
@@ -26,46 +25,40 @@ exports.Register = async (req, res, next) => {
       });
       res.json(newUser);
 
-    await newUser.save();
-    res.status(201).json({ message: "Operator register suceesful" });
+      await newUser.save();
+      res.status(201).json({message: "Operator register suceesful"});
     } else {
       throw new Error("Operator already exist");
     }
-
   } catch (error) {
     console.log(error);
   }
 };
 
-
 exports.Login = async (req, res) => {
-  const { email_address, password } = req.body;
- 
+  const {email_address, password} = req.body;
+
   try {
-    const user = await Operator.findOne({email_address });
-   
+    const user = await Operator.findOne({email_address});
 
     if (!user) {
-      return res.json({ message: "Incorrect email" });
+      return res.json({message: "Incorrect email"});
     }
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      return res.status(404).json({ message: "inCorrect passord" });
+      return res.status(404).json({message: "inCorrect passord"});
     }
-    if(user && passwordMatch){
+    if (user && passwordMatch) {
       res.json({
-        id:user?._id,
+        id: user?._id,
         email_address,
         password,
-        token:generateToken(user?._id)
-      })
-      return res.status(200).json({ message: "login succes fully done " });
+        token: generateToken(user?._id),
+      });
+      return res.status(200).json({message: "login succes fully done "});
     }
- 
-  } catch (error) {
-
-  }
+  } catch (error) {}
 };
 exports.AddAircrafts = async (req, res, next) => {
   console.log(req.body);
@@ -75,7 +68,7 @@ exports.AddAircrafts = async (req, res, next) => {
     Tail_sign: req.body.Tail_sign,
     location: req.body.location,
     charges_per_hour: req.body.charges_per_hour,
-    speed: req.body.speed
+    speed: req.body.speed,
   };
   console.log(AirOperator);
 
@@ -93,7 +86,6 @@ exports.AddAircrafts = async (req, res, next) => {
 };
 
 exports.getOperatorlists = async (req, res) => {
-
   const operator = await OperatorService.getOperators();
   // if (!operator || operator.length < 1)
   //   return res.status(404).json({success: false, message: "No opeator found"});
@@ -117,8 +109,11 @@ exports.EditOperator = async (req, res) => {
   console.log(AirOperator);
 
   const operator = await OperatorService.updateOperator({_id}, AirOperator);
-  operator.save();
 
   res.status(200).json({succes: true, message: "Operator is updated"});
 };
-exports.DeleteOperator = async (req, res) => {};
+exports.DeleteOperator = async (req, res) => {
+  const _id = req.params.cardId;
+  const result = await OperatorService.deleteOperator({_id});
+  res.status(204).json({success: true, message: "operator is deleted"});
+};
