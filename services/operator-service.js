@@ -1,4 +1,4 @@
-const {Operator,AircraftOPerator}= require("../db/Operator");
+const {Operator, AircraftOPerator} = require("../db/Operator");
 class OperatorService {
   getOperators = async () => {
     return await AircraftOPerator.find();
@@ -33,8 +33,10 @@ class OperatorService {
     const operator = await AircraftOPerator.findOneAndUpdate(_id, data, {new:true});
   return operator
   };
+
   deleteOperator = async (_id) => {
     return await AircraftOPerator.findOneAndDelete(_id);
+
   };
   createOperator = async (operator) => {
     return await AircraftOPerator.create(operator);

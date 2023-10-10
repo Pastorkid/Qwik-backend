@@ -2,17 +2,12 @@ const express = require("express");
 const router = express.Router();
 const AdminController = require("../controller/C-Admin");
 
-// router.post("/login", AdminController);
-router.get("/get");
-router.get("/margin", AdminController.AdminPrice);
+const asyncMiddleware = require("../middleware/async-middleware");
 
-//New routers of admin(new endpoint for new version development)
 
-router.post("/resgister");
-router.post("/login");
-router.get("/distance");
-router.get("/time");
-router.post("/margin");
-router.get("/totalCost");
+router.post("/register", asyncMiddleware(AdminController.Register));
+
+router.post("/login", asyncMiddleware(AdminController.Login));
+
 
 module.exports = router;

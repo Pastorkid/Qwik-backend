@@ -17,7 +17,11 @@ router.post(
   authMiddleware,
   asyncMiddleware(OperatorController.AddAircrafts)
 );
-router.get("/getOperatorlists", authMiddleware, asyncMiddleware(OperatorController.getOperatorlists));
+router.get(
+  "/getOperatorlists",
+  authMiddleware,
+  asyncMiddleware(OperatorController.getOperatorlists)
+);
 // router.get("/getOperator", authMiddleware, OperatorController.getOperatorlist);
 router.put("/editAircraft/:id", authMiddleware, asyncMiddleware(OperatorController.EditOperator));
 router.delete(
