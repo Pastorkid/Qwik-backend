@@ -1,11 +1,15 @@
 const Auth = require("../db/Auth");
 const bcrypt = require("bcrypt");
-const {Operator, AircraftOPerator} = require("../db/Operator");
+
+const { Operator, AircraftOPerator } = require("../db/Operator");
+
 const Token = require("../configs/jwtToken");
 const ErrorHandler = require("../utils/error-handler");
 const OperatorService = require("../services/operator-service");
 const OperatorDto = require("../dtos/operator-dto");
-const generateToken = require("../configs/jwtToken");
+
+const generateToken = require("../configs/jwtToken")
+
 
 exports.Register = async (req, res, next) => {
   const {company_name, email_address, password} = req.body;
@@ -26,7 +30,9 @@ exports.Register = async (req, res, next) => {
       res.json(newUser);
 
       await newUser.save();
-      res.status(201).json({message: "Operator register suceesful"});
+
+      res.status(201).json({ message: "Operator register suceesful" });
+
     } else {
       throw new Error("Operator already exist");
     }
@@ -36,10 +42,12 @@ exports.Register = async (req, res, next) => {
 };
 
 exports.Login = async (req, res) => {
-  const {email_address, password} = req.body;
+
+  const { email_address, password } = req.body;
 
   try {
-    const user = await Operator.findOne({email_address});
+    const user = await Operator.findOne({ email_address });
+
 
     if (!user) {
       return res.json({message: "Incorrect email"});
@@ -54,11 +62,16 @@ exports.Login = async (req, res) => {
         id: user?._id,
         email_address,
         password,
-        token: generateToken(user?._id),
-      });
-      return res.status(200).json({message: "login succes fully done "});
+
+        token: generateToken(user?._id)
+      })
+      return res.status(200).json({ message: "login succes fully done " });
     }
-  } catch (error) {}
+
+  } catch (error) {
+
+  }
+
 };
 exports.AddAircrafts = async (req, res, next) => {
   console.log(req.body);
@@ -87,33 +100,84 @@ exports.AddAircrafts = async (req, res, next) => {
 
 exports.getOperatorlists = async (req, res) => {
   const operator = await OperatorService.getOperators();
-  // if (!operator || operator.length < 1)
-  //   return res.status(404).json({success: false, message: "No opeator found"});
-  // operator = operator.map((o) => {
-  //   return new OperatorDto(o);
-  // });
-  res.json({succes: true, message: "operator List found", data: operator});
+ 
+  res.json({ succes: true, message: "operator List found", data: operator });
 };
 exports.EditOperator = async (req, res) => {
-  const _id = req.params.cardId;
-  const body = req.body;
+  const { _id } = req.params;
+
 
   const AirOperator = {
-    Aircraft_type: req.body.Aircraft_type,
-    Tail_sign: req.body.Tail_sign,
-    location: req.body.location,
-    charges_per_hour: req.body.charges_per_hour,
-    speed: req.body.speed,
-    date: req.body.date,
+    Aircraft_type: req?.body?.Aircraft_type,
+    Tail_sign: req?.body?.Tail_sign,
+    location: req?.body?.location,
+    charges_per_hour: req?.body?.charges_per_hour,
+    speed: req?.body?.speed,
+
   };
   console.log(AirOperator);
 
-  const operator = await OperatorService.updateOperator({_id}, AirOperator);
 
-  res.status(200).json({succes: true, message: "Operator is updated"});
+  const operator = await OperatorService.updateOperator(_id, AirOperator);
+
+  if (!operator) {
+    return res.status(404).json({ success: false, message: "Operator not found" });
+  }
+
+  try {
+    await operator.save();
+    res.status(200).json({ success: true, message: "Operator is updated" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error updating operator" });
+  }
+
+
+
+
 };
 exports.DeleteOperator = async (req, res) => {
-  const id = req.params.cardId;
-  const result = await OperatorService.deleteOperator({id});
-  res.status(204).json({success: true, message: "operator is deleted"});
+  const { _id } = req.params;
+  try {
+    const deleteOperator = await OperatorService.deleteOperator(_id)
+    res.json({
+      success: true,
+      data: deleteOperator
+    })
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error while deleting operator" });
+  }
 };
+
+exports.getSingleOperator=async(req,res)=>{
+  const { _id } = req.params;
+
+ try {
+  const operator = await OperatorService.getOperator(_id);
+ if(!operator){
+  return res.status(404).json({ success: false, message: "Operator not found" });
+ }else{
+  res.json({
+    success: true,
+    data: operator
+  })
+ }
+ } catch (error) {
+  res.status(500).json({ success: false, message: "Error while freshing operator" });
+ }
+}
+
+exports.getSearchFilter=async(req,res)=>{
+  const {filter}=req.query;
+
+  try {
+    const result=await OperatorService.getOpeartorsSearchFilter(filter);
+    res.json({
+      success: true,
+      data:result
+    })
+  } catch (error) {
+
+    res.status(500).json({ success: false, message: "Error while searching operators" });
+  }
+}
+

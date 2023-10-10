@@ -23,10 +23,12 @@ router.get(
   asyncMiddleware(OperatorController.getOperatorlists)
 );
 // router.get("/getOperator", authMiddleware, OperatorController.getOperatorlist);
-router.patch("/editdatils", authMiddleware, OperatorController.EditOperator);
+router.put("/editAircraft/:id", authMiddleware, asyncMiddleware(OperatorController.EditOperator));
 router.delete(
-  "/deleteAircraft",
+  "/deleteAircraft/:id",
   authMiddleware,
-  OperatorController.DeleteOperator
+asyncMiddleware(OperatorController.DeleteOperator)
 );
+router.get("/getSingleOperator/:id", authMiddleware, asyncMiddleware(OperatorController.getSingleOperator));
+router.get("/searchOperator", authMiddleware, asyncMiddleware(OperatorController.getSearchFilter))
 module.exports = router;
