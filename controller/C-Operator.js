@@ -79,7 +79,7 @@ exports.AddAircrafts = async (req, res, next) => {
   operator.save();
   return res.json({
     success: true,
-    message: "Operator has beedn added Succesfully",
+    message: "Operator has been added Succesfully",
     statusCode: "201",
     data: new OperatorDto(operator),
   });
@@ -113,7 +113,7 @@ exports.EditOperator = async (req, res) => {
   res.status(200).json({succes: true, message: "Operator is updated"});
 };
 exports.DeleteOperator = async (req, res) => {
-  const _id = req.params.cardId;
-  const result = await OperatorService.deleteOperator({_id});
+  const id = req.params.cardId;
+  const result = await OperatorService.deleteOperator({id});
   res.status(204).json({success: true, message: "operator is deleted"});
 };
