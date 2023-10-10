@@ -19,17 +19,4 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
-// const isAdmin=asyncHandler(async(req,res,next)=>{
-//   const {email}=req.admin;
-//   const adminUser=await prisma.Admin.findUnique({
-//     where:{
-//       email:email
-//     }
-//   });
-//   if(adminUser.role!=="Admin"){
-//       throw new Error("Only admin can access this route")
-//   }else{
-//     next();
-//   }
-// })
 module.exports = {authMiddleware};
