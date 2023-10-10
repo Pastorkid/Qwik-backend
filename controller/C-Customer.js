@@ -3,6 +3,8 @@ const Customer = require("../db/Customer");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {check, validationResult} = require("express-validator");
+const axios = require('axios');
+const {configFunction}=require("../configs/aviapi.config")
 
 exports.Register = async (req, res) => {
   const errors = validationResult(req);
@@ -86,59 +88,109 @@ exports.FlightSearch = async (req, res) => {
 
   res.json(results);
 };
-exports.calculateDistance = async (lat1, lon1, lat2, lon2) => {
-  const earthRadius = 6371;
-  const dLat = (lat2 - lat1) * (MATH.PI / 180);
-  const dLon = (lon2 - lon1) * (Math.PI / 180);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * (Math.PI / 180)) *
-      Math.cos(Lat2 * (Math.PI / 180)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = earthRadius * c;
-  return distance;
-};
+// exports.calculateDistance = async (lat1, lon1, lat2, lon2) => {
+//   const earthRadius = 6371;
+//   const dLat = (lat2 - lat1) * (MATH.PI / 180);
+//   const dLon = (lon2 - lon1) * (Math.PI / 180);
+//   const a =
+//     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+//     Math.cos(lat1 * (Math.PI / 180)) *
+//       Math.cos(Lat2 * (Math.PI / 180)) *
+//       Math.sin(dLon / 2) *
+//       Math.sin(dLon / 2);
+//   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+//   const distance = earthRadius * c;
+//   return distance;
+// };
 
-exports.PriceCalcultor = async (req, res) => {
+
+
+// exports.PriceCalcultor = async (req, res) => {
+//   try {
+//     const {aircraftType, origin, destination} = req.body;
+//     const aircraft = await Operator.findOne({type: aircraftType});
+//     if (!aircraft) {
+//       return res.status(404).json({error: "Aircraft not found"});
+//     }
+
+//     const distance = calculateDistance(
+//       origin.latitude,
+//       origin.longitude,
+//       destination.latitude,
+//       destination.longitude
+//     );
+//     const totalPrice = aircraft.hourlyRate * (distance / aircraft.speed);
+
+//     res.json({totalPrice});
+//   } catch (error) {
+//     res.status(500).json({error: "Internal server error"});
+//   }
+// };
+
+// exports.AdminPrice = async (req, res) => {
+//   try {
+//     const calculatePriceResponse = await PriceCalcultor();
+//     console.log(calculatePriceResponse);
+
+//     if (!calculatePriceResponse.ok) {
+//       return res.status(500).json({error: "error calculating"});
+//     }
+
+//     const {totalPrice} = await calculatePriceResponse.json();
+
+//     const discountAmount = totalPrice * 0.05;
+//     console.log(discountAmount);
+
+//     req.json({discountAmount});
+//   } catch (error) {
+//     res.status(500).json({error: "Internal server error"});
+//   }
+// };
+
+
+
+
+// Function to make the Aviapages API request
+exports.calculateDistance=async ()=> {
+  const data = '{"departure_airport": "VABB", "arrival_airport": "OMDB", "aircraft": "Learjet 25", "airway_time_weather_impacted": true, "airport": true, "great_circle_distance": true, "advise_techstop": true}\r\n';
+  const config = {
+    method: "post",
+    maxBodyLength: Infinity,
+    url: "https://frc.aviapages.com/flight_calculator/",
+    headers: {
+      "Content-Type": "text/plain",
+      Authorization: "Token qBEefU5YDGi7rSYKyJPGGjrR6FVm4MeyzcRo",
+    },
+    data:data
+  };
   try {
-    const {aircraftType, origin, destination} = req.body;
-    const aircraft = await Operator.findOne({type: aircraftType});
-    if (!aircraft) {
-      return res.status(404).json({error: "Aircraft not found"});
-    }
-
-    const distance = calculateDistance(
-      origin.latitude,
-      origin.longitude,
-      destination.latitude,
-      destination.longitude
-    );
-    const totalPrice = aircraft.hourlyRate * (distance / aircraft.speed);
-
-    res.json({totalPrice});
+    const response = await axios(config);
+    return response.data;
   } catch (error) {
-    res.status(500).json({error: "Internal server error"});
+    console.error(error);
+    throw new Error('Failed to make API request');
   }
-};
+}
 
-exports.AdminPrice = async (req, res) => {
-  try {
-    const calculatePriceResponse = await PriceCalcultor();
-    console.log(calculatePriceResponse);
 
-    if (!calculatePriceResponse.ok) {
-      return res.status(500).json({error: "error calculating"});
-    }
+exports.calculateValues=(apiResponse) =>{
+  const miles = apiResponse / 1.852;
+  const techHalts = miles / 1800;
+  const time_aircraft = miles / 464;
+  const total_time = 1;
+  const total_flying = time_aircraft + total_time;
+  const TotalPrice_operator = total_flying * 250000;
+  const MarginPrice = (TotalPrice_operator + TotalPrice_operator * 0.05) * 2;
 
-    const {totalPrice} = await calculatePriceResponse.json();
+  return {
+    miles,
+    techHalts,
+    time_aircraft,
+    total_time,
+    total_flying,
+    TotalPrice_operator,
+    MarginPrice,
+  };
+}
 
-    const discountAmount = totalPrice * 0.05;
-    console.log(discountAmount);
 
-    req.json({discountAmount});
-  } catch (error) {
-    res.status(500).json({error: "Internal server error"});
-  }
-};

@@ -1,30 +1,43 @@
-const Operator = require("../db/Operator");
-
+const {Operator,AircraftOPerator}= require("../db/Operator");
 class OperatorService {
-  getOperators = async (filter = null) => {
-    return await Operator.find(filter);
+  getOperators = async () => {
+    return await AircraftOPerator.find();
   };
+  // getOpeartorsSearchFilter = async (filter) => {
+  //   const key = Object.key(filter);
+  //   const value = filter[key];
+  //   const reg = {
+  //     [key]: new RegExp(value, "i"),
+  //   };
+  //   return await Operator.find(reg);
+  // };
   getOpeartorsSearchFilter = async (filter) => {
-    const key = Object.key(filter);
+    const key = Object.keys(filter)[0]; // Get the first (and presumably only) key
     const value = filter[key];
     const reg = {
       [key]: new RegExp(value, "i"),
     };
-    return await Operator.find(reg);
+  
+    try {
+      const operators = await Operator.find(reg);
+      return operators;
+    } catch (error) {
+      throw new Error("Error searching for operators: " + error.message);
+    }
   };
 
-  getOperator = async (filter) => {
-    return await Operator.findOne(filter);
+  getOperator = async (_id) => {
+    return await AircraftOPerator.findOne(_id);
   };
-  updateOperator = async (filter, data) => {
-    const operator = await Operator.findOneAndUpdate(filter, data);
-    return operator;
+  updateOperator = async (_id, data) => {
+    const operator = await AircraftOPerator.findOneAndUpdate(_id, data, {new:true});
+  return operator
   };
-  deleteOperator = async (filter) => {
-    return await Operator.deleteOne(filter);
+  deleteOperator = async (_id) => {
+    return await AircraftOPerator.findOneAndDelete(_id);
   };
   createOperator = async (operator) => {
-    return await Operator.create(operator);
+    return await AircraftOPerator.create(operator);
   };
 }
 module.exports = new OperatorService();
