@@ -9,17 +9,15 @@ const OperatorSchema = new Mongoose.Schema({
     type: String,
     required: true,
   },
-  
+
   password: {
     type: String,
     required: true,
   },
-  
 });
-const AircraftOPeratorSchema=new Mongoose.Schema({
+const AircraftOPeratorSchema = new Mongoose.Schema({
   contact_number: {
     type: Number,
-    
   },
   Aircraft_type: {
     type: String,
@@ -38,9 +36,11 @@ const AircraftOPeratorSchema=new Mongoose.Schema({
     type: Number,
   },
   date: {type: Date, default: Date.now},
-})
+});
 
-const Operator=Mongoose.model("Operator", OperatorSchema);
-const AircraftOPerator=Mongoose.model("AircraftOPerator", AircraftOPeratorSchema)
+const Operator = Mongoose.model("Operator", OperatorSchema);
+const AircraftOPerator = Mongoose.model(
+  "AircraftOPerator",
+  AircraftOPeratorSchema
+);
 module.exports = {Operator, AircraftOPerator};
-

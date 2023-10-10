@@ -1,8 +1,8 @@
 const {Operator} = require("../db/Operator");
 const jwt = require("jsonwebtoken");
-
+const JwtToken = require("../configs/jwtToken");
 const authMiddleware = async (req, res, next) => {
-  let token;
+  let token = JwtToken;
   if (req?.headers.authorization?.startsWith("Bearer")) {
     token = req.headers.authorization.split(" ")[1];
 
@@ -17,5 +17,4 @@ const authMiddleware = async (req, res, next) => {
     console.log("No Bearer token attached to header");
   }
 };
-
 module.exports = {authMiddleware};
