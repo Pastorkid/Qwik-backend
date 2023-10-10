@@ -172,7 +172,7 @@ exports.calculateDistance=async ()=> {
   }
 }
 
-// Function to calculate values based on the API response
+
 exports.calculateValues=(apiResponse) =>{
   const miles = apiResponse / 1.852;
   const techHalts = miles / 1800;
