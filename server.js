@@ -13,6 +13,7 @@ const dotenv = require("dotenv");
 require("./database/Database");
 dotenv.config();
 const CustomerController=require("./controller/C-Customer")
+
 // var corOptions = {
 //   origin: "http://localhost:8081",
 // };
@@ -43,6 +44,122 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   res.send("Hello node API");
 });
+
+
+app.post('/calculateFlightTime', async (req, res) => {
+  const requestData = {
+    departure_airport: req.body.departure_airport,
+    arrival_airport:req.body.arrival_airport,
+    aircraft: req.body.aircraft,
+    airway_time: req.body.airway_time,
+    great_circle_distance:true, 
+    advise_techstop:true
+  };
+
+  try {
+    // Call the Aviapages API to calculate flight time using requestData
+    const flightTime = await CustomerController.calculateFlightTime(requestData);
+
+    res.json(flightTime);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+async function getAllAirports() {
+  let allAirports = [];
+  let nextPage = 'https://dir.aviapages.com/api/airports/';
+
+  while (nextPage) {
+    try {
+      const response = await axios.get(nextPage, {
+        headers: {
+          'accept': 'application/json',
+          'Authorization':process.env.AVID_API_TOKEN, // Replace 'your_token_here' with your actual token
+        },
+      });
+
+      if (response.status === 200) {
+        const pageData = response.data.results;
+        allAirports = allAirports.concat(pageData);
+        nextPage = response.data.next;
+      } else {
+        console.error('Failed to fetch airport data');
+        break;
+      }
+    } catch (error) {
+      console.error('Error fetching airport data');
+      break;
+    }
+  }
+
+  return allAirports;
+}
+
+app.get('/all-airports', async (req, res) => {
+  try {
+    const airports = await getAllAirports();
+    res.json(airports.map(airport => ({
+      city_name: airport.city_name,
+      icao: airport.icao,
+    })));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error fetching airport data' });
+  }
+});
+
+async function getAllCrafts() {
+  let allAirCrafts = [];
+  let nextPage = 'https://dir.aviapages.com/api/aircraft/';
+
+  while (nextPage) {
+    try {
+      const response = await axios.get(nextPage, {
+        headers: {
+          'accept': 'application/json',
+          'Authorization': process.env.AVID_API_TOKEN,
+        },
+      });
+
+      if (response.status === 200) {
+        const pageData = response.data.results;
+        allAirCrafts = allAirCrafts.concat(pageData);
+        nextPage = response.data.next;
+      } else {
+        console.error('Failed to fetch aircraft data');
+        break;
+      }
+    } catch (error) {
+      console.error('Error fetching aircraft data');
+      break;
+    }
+  }
+
+  return allAirCrafts;
+}
+
+app.get('/all-airCrafts', async (req, res) => {
+  try {
+    const aircraft = await getAllCrafts();
+    // Filter the aircraft data
+    const filteredAircraft = aircraft.filter(aircraft => (
+      aircraft.aircraft_type_name === "Challenger 605" ||
+      aircraft.aircraft_type_name === "Learjet" ||
+      aircraft.aircraft_type_name === "B200" ||
+      aircraft.aircraft_type_name === "C90"
+    ));
+
+    res.json(filteredAircraft.map(aircraft => ({
+      aircraft_id: aircraft.aircraft_id,
+      aircraft_type_name: aircraft.aircraft_type_name,
+    })));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error fetching aircraft data' });
+  }
+});
+
 // app.get("/calculateDistance", async (req, res) => {
 //   let data =
 //     '{"departure_airport": "VABB", "arrival_airport": "OMDB", "aircraft": "Learjet 25", "airway_time_weather_impacted": true,"airport":true,"great_circle_distance":true, "advise_techstop":true}\r\n';

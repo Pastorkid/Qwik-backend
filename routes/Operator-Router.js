@@ -31,4 +31,5 @@ asyncMiddleware(OperatorController.DeleteOperator)
 );
 router.get("/getSingleOperator/:id", authMiddleware, asyncMiddleware(OperatorController.getSingleOperator));
 router.get("/searchOperator", authMiddleware, asyncMiddleware(OperatorController.getSearchFilter))
+router.get("/allLocation", asyncMiddleware(OperatorController.GetAllLocation))
 module.exports = router;

@@ -1,13 +1,16 @@
-configFunction=(data)=>{
-  return  config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: "https://frc.aviapages.com/flight_calculator/",
+// aviapages.config.js
+const axios = require('axios');
+
+const buildRequestConfig=(data) =>{
+  return {
+    method: 'post',
+    url: 'https://frc.aviapages.com/flight_calculator/',
     headers: {
-      "Content-Type": "text/plain",
-      Authorization: process.env.AVID_API_TOKEN,
+      'Content-Type':'application/json',
+      Authorization: process.env.AVID_API_TOKEN, // Replace with your Aviapages API token
     },
-    data
+    data: data,
   };
 }
-module.exports={configFunction}
+
+module.exports = { buildRequestConfig };
