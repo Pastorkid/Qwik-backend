@@ -16,4 +16,29 @@ const CustomerSchema = new Mongoose.Schema({
   },
 });
 
-module.exports = Mongoose.model("Customer", CustomerSchema);
+
+const CustomerFightTimeCalculationSchema = new Mongoose.Schema({
+  departure_airport: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+ 
+  aircraft: {
+    type: String,
+    unique: true,
+  },
+  pax: {
+    type: String,
+    required: true,
+  },
+  airway_time: {
+    type: Boolean,
+    default: true,
+  },
+});
+
+const TimeFlight = Mongoose.model("TimeFlight", CustomerFightTimeCalculationSchema);
+const Customer=Mongoose.model("Customer", CustomerSchema);
+module.exports = { Customer, TimeFlight};
+

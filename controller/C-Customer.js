@@ -1,10 +1,10 @@
 const Operator = require("../db/Operator");
-const Customer = require("../db/Customer");
+const {Customer} = require("../db/Customer");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {check, validationResult} = require("express-validator");
 const axios = require('axios');
-const {configFunction}=require("../configs/aviapi.config")
+const { buildRequestConfig } = require('../configs/aviapi.config');
 
 exports.Register = async (req, res) => {
   const errors = validationResult(req);
@@ -61,33 +61,48 @@ exports.Login = async (req, res) => {
     res.status(500).json({message: "Internal server Error"});
   }
 };
-exports.Authorization=async(req,res)=>{
-  const token=req.header("Authorization");
+// exports.Authorization=async(req,res)=>{
+//   const token=req.header("Authorization");
 
-  if(!token){
-    return res.status(401).json({message:'Authcation failed'})
-  }
-  try{
-    const decoded=jwt.verify(token,"auth");
-    res.json({message:'You have access to this autherzation'})
-  }catch(error){
-    console.log(error);
-    res.status(401).json({message:"Authnication is failed"})
+//   if(!token){
+//     return res.status(401).json({message:'Authcation failed'})
+//   }
+//   try{
+//     const decoded=jwt.verify(token,"auth");
+//     res.json({message:'You have access to this autherzation'})
+//   }catch(error){
+//     console.log(error);
+//     res.status(401).json({message:"Authnication is failed"})
+//   }
+// }
+
+
+
+
+exports.calculateFlightTime=async(data)=> {
+  try {
+    const response = await axios(buildRequestConfig(data));
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to calculate flight time');
   }
 }
-exports.FlightSearch = async (req, res) => {
-  const {from, to, date} = req.query;
 
-  const results = flights.filter((flight) => {
-    return (
-      flight.from.toLowerCase() == from.toLowerCase() &&
-      flight.to.toLowerCase() === to.toLowerCase() &&
-      flight.date === date
-    );
-  });
 
-  res.json(results);
-};
+// exports.FlightSearch = async (req, res) => {
+//   const {from, to, date} = req.query;
+
+//   const results = flights.filter((flight) => {
+//     return (
+//       flight.from.toLowerCase() == from.toLowerCase() &&
+//       flight.to.toLowerCase() === to.toLowerCase() &&
+//       flight.date === date
+//     );
+//   });
+
+//   res.json(results);
+// };
 // exports.calculateDistance = async (lat1, lon1, lat2, lon2) => {
 //   const earthRadius = 6371;
 //   const dLat = (lat2 - lat1) * (MATH.PI / 180);
@@ -151,46 +166,46 @@ exports.FlightSearch = async (req, res) => {
 
 
 // Function to make the Aviapages API request
-exports.calculateDistance=async ()=> {
-  const data = '{"departure_airport": "VABB", "arrival_airport": "OMDB", "aircraft": "Learjet 25", "airway_time_weather_impacted": true, "airport": true, "great_circle_distance": true, "advise_techstop": true}\r\n';
-  const config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: "https://frc.aviapages.com/flight_calculator/",
-    headers: {
-      "Content-Type": "text/plain",
-      Authorization: "Token qBEefU5YDGi7rSYKyJPGGjrR6FVm4MeyzcRo",
-    },
-    data:data
-  };
-  try {
-    const response = await axios(config);
-    return response.data;
-  } catch (error) {
-    console.error(error);
-    throw new Error('Failed to make API request');
-  }
-}
+// exports.calculateDistance=async ()=> {
+//   const data = '{"departure_airport": "VABB", "arrival_airport": "OMDB", "aircraft": "Learjet 25", "airway_time_weather_impacted": true, "airport": true, "great_circle_distance": true, "advise_techstop": true}\r\n';
+//   const config = {
+//     method: "post",
+//     maxBodyLength: Infinity,
+//     url: "https://frc.aviapages.com/flight_calculator/",
+//     headers: {
+//       "Content-Type": "text/plain",
+//       Authorization: "Token qBEefU5YDGi7rSYKyJPGGjrR6FVm4MeyzcRo",
+//     },
+//     data:data
+//   };
+//   try {
+//     const response = await axios(config);
+//     return response.data;
+//   } catch (error) {
+//     console.error(error);
+//     throw new Error('Failed to make API request');
+//   }
+// }
 
 
-exports.calculateValues=(apiResponse) =>{
-  const miles = apiResponse / 1.852;
-  const techHalts = miles / 1800;
-  const time_aircraft = miles / 464;
-  const total_time = 1;
-  const total_flying = time_aircraft + total_time;
-  const TotalPrice_operator = total_flying * 250000;
-  const MarginPrice = (TotalPrice_operator + TotalPrice_operator * 0.05) * 2;
+// exports.calculateValues=(apiResponse) =>{
+//   const miles = apiResponse / 1.852;
+//   const techHalts = miles / 1800;
+//   const time_aircraft = miles / 464;
+//   const total_time = 1;
+//   const total_flying = time_aircraft + total_time;
+//   const TotalPrice_operator = total_flying * 250000;
+//   const MarginPrice = (TotalPrice_operator + TotalPrice_operator * 0.05) * 2;
 
-  return {
-    miles,
-    techHalts,
-    time_aircraft,
-    total_time,
-    total_flying,
-    TotalPrice_operator,
-    MarginPrice,
-  };
-}
+//   return {
+//     miles,
+//     techHalts,
+//     time_aircraft,
+//     total_time,
+//     total_flying,
+//     TotalPrice_operator,
+//     MarginPrice,
+//   };
+// }
 
 

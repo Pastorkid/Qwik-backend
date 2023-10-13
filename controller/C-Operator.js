@@ -148,6 +148,14 @@ exports.DeleteOperator = async (req, res) => {
   }
 };
 
+
+
+
+exports.GetAllLocation = async (req, res) => {
+  const operator = await OperatorService.getAllOperatorsLocation();
+ 
+  res.json({ succes: true, message: "operator List found", data: operator });
+};
 exports.getSingleOperator=async(req,res)=>{
   const { _id } = req.params;
 
